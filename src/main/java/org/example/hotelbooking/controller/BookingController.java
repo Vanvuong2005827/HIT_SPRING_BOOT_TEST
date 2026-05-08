@@ -12,6 +12,7 @@ import org.example.hotelbooking.dto.CreateBookingRequest;
 import org.example.hotelbooking.dto.FindBookingsByCustomerRequest;
 import org.example.hotelbooking.service.BookingService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -37,23 +38,39 @@ public class BookingController {
     }
 
     @GetMapping("/booking")
-    public ApiResponse<BookingResponse> getBooking(
+    public ResponseEntity<ApiResponse<BookingResponse>> getBooking(
+            @RequestParam String id
     ) {
+        BookingResponse bookingResponses = bookingService.findById(id);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.ok("Lấy booking thành công",bookingResponses));
     }
 
     @GetMapping("/bookings")
-    public ApiResponse<ListResponse<BookingResponse>> getBookingsByCustomer(
+    public ResponseEntity<ApiResponse<List<BookingResponse>>> getBookingsByCustomer(
     ) {
+        List<BookingResponse> bookingResponses = bookingService.findAll();
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.ok("Lấy danh sách booking thành công", bookingResponses));
     }
 
     @PostMapping("/booking")
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<BookingResponse> createBooking() {
-
+    public ResponseEntity<ApiResponse<BookingResponse>> createBooking(@RequestBody CreateBookingRequest createBookingRequest) {
+        BookingResponse bookingResponse = bookingService.create(createBookingRequest);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ApiResponse.ok("Thành công", bookingResponse));
     }
 
     @PatchMapping("/booking/{booking_id}/cancel")
     public ApiResponse<BookingResponse> cancelBooking(
+            @PathVariable String id
     ) {
+
     }
 }

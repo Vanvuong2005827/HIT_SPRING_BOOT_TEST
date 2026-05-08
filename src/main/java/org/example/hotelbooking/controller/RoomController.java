@@ -5,10 +5,14 @@ import org.example.hotelbooking.common.response.ApiResponse;
 import org.example.hotelbooking.common.response.ListResponse;
 import org.example.hotelbooking.constant.ApiPath;
 import org.example.hotelbooking.constant.SuccessMessage;
+import org.example.hotelbooking.domain.BookingStatus;
+import org.example.hotelbooking.domain.RoomStatus;
 import org.example.hotelbooking.dto.AvailableRoomsRequest;
 import org.example.hotelbooking.dto.RoomResponse;
 import org.example.hotelbooking.service.RoomService;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,7 +41,11 @@ public class RoomController {
     }
 
     @GetMapping("/rooms/available")
-    public ApiResponse<ListResponse<RoomResponse>> getAvailableRooms(
+    public ResponseEntity<ApiResponse<List<RoomResponse>>> getAvailableRooms(
     ) {
+        List<RoomResponse> roomResponseList = roomService.findByStatus(RoomStatus.AVAILABLE);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.ok("Thành công", roomResponseList));
     }
 }

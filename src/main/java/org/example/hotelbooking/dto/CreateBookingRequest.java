@@ -10,25 +10,25 @@ import org.example.hotelbooking.constant.ErrorMessage;
 import java.time.Instant;
 
 public record CreateBookingRequest(
-        // TO DO
+        @NotBlank(message = "Tên khách hàng không được để trống")
         String customerName,
 
-        // TO DO
+        @NotBlank(message = "CCCD không được để trống")
         String customerCccd,
 
-        // TO DO
+        @NotBlank(message = "ID không được để trống")
         String roomId,
 
-        // TO DO
+        @NotNull(message = "Thời gian check-in không được để trống")
         Instant checkInDateTime,
 
-        // TO DO
+        @NotNull(message = "Thời gian check-out không được để trống")
         Instant checkOutDateTime,
 
-        // TO DO
+        @NotNull(message = "Số lượng khách không được để trống")
+        @Min(value = 1, message = "Số lượng khách phải từ 1 trở lên")
         Integer numberOfGuests,
 
-        // TO DO
         String note
 ) {
 }

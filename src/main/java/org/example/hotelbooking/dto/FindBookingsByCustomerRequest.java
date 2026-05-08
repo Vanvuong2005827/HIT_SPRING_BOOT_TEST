@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Pattern;
 import org.example.hotelbooking.constant.ErrorMessage;
 
 public record FindBookingsByCustomerRequest(
-        // TO DO
+        @NotBlank(message = "CCCD không được để trống")
         String cccd
 ) {
 }

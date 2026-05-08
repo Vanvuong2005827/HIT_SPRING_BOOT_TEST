@@ -5,23 +5,13 @@ import jakarta.validation.constraints.NotBlank;
 import org.example.hotelbooking.common.response.ApiResponse;
 import org.example.hotelbooking.common.response.ListResponse;
 import org.example.hotelbooking.constant.ApiPath;
-import org.example.hotelbooking.constant.ErrorMessage;
 import org.example.hotelbooking.constant.SuccessMessage;
 import org.example.hotelbooking.dto.BookingResponse;
 import org.example.hotelbooking.dto.CreateBookingRequest;
-import org.example.hotelbooking.dto.FindBookingsByCustomerRequest;
 import org.example.hotelbooking.service.BookingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -38,22 +28,34 @@ public class BookingController {
 
     @GetMapping("/booking")
     public ApiResponse<BookingResponse> getBooking(
+            @RequestParam("booking_id") @NotBlank String bookingId
     ) {
+        BookingResponse response = bookingService.getBooking(bookingId);
+        return ApiResponse.ok(SuccessMessage.GET_SUCCESS, response);
     }
 
     @GetMapping("/bookings")
     public ApiResponse<ListResponse<BookingResponse>> getBookingsByCustomer(
+            @RequestParam("cccd") @NotBlank String cccd
     ) {
+        List<BookingResponse> responses = bookingService.getBookingsByCustomer(cccd);
+        return ApiResponse.ok(SuccessMessage.GET_SUCCESS, ListResponse.of(responses));
     }
 
     @PostMapping("/booking")
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<BookingResponse> createBooking() {
-
+    public ApiResponse<BookingResponse> createBooking(
+            @RequestBody @Valid CreateBookingRequest request
+    ) {
+        BookingResponse response = bookingService.createBooking(request);
+        return ApiResponse.ok(SuccessMessage.CREATE_SUCCESS, response);
     }
 
     @PatchMapping("/booking/{booking_id}/cancel")
     public ApiResponse<BookingResponse> cancelBooking(
+            @PathVariable("booking_id") String bookingId
     ) {
+        BookingResponse response = bookingService.cancelBooking(bookingId);
+        return ApiResponse.ok(SuccessMessage.CANCEL_SUCCESS, response);
     }
 }

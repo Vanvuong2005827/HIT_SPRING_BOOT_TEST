@@ -9,6 +9,7 @@ import org.example.hotelbooking.dto.AvailableRoomsRequest;
 import org.example.hotelbooking.dto.RoomResponse;
 import org.example.hotelbooking.service.RoomService;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,6 +39,10 @@ public class RoomController {
 
     @GetMapping("/rooms/available")
     public ApiResponse<ListResponse<RoomResponse>> getAvailableRooms(
+            @Valid @RequestBody AvailableRoomsRequest request
     ) {
+        List<RoomResponse> items = roomService.getAvailableRooms(request);
+        return ApiResponse.ok("Success!", ListResponse.of(items));
     }
+
 }

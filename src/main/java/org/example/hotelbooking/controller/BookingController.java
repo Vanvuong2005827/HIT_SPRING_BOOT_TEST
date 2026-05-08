@@ -36,24 +36,29 @@ public class BookingController {
         this.bookingService = bookingService;
     }
 
-    @GetMapping("/booking")
+    @GetMapping("/booking/booking_id")
     public ApiResponse<BookingResponse> getBooking(
+            @RequestParam() String booking_id
     ) {
+        return ApiResponse.ok("Success", bookingService.getBooking(booking_id));
     }
 
-    @GetMapping("/bookings")
-    public ApiResponse<ListResponse<BookingResponse>> getBookingsByCustomer(
-    ) {
-    }
-
+    //
+//    @GetMapping("/bookings")
+//    public ApiResponse<ListResponse<BookingResponse>> getBookingsByCustomer(
+//    ) {
+//    }
+//
     @PostMapping("/booking")
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<BookingResponse> createBooking() {
-
-    }
-
-    @PatchMapping("/booking/{booking_id}/cancel")
-    public ApiResponse<BookingResponse> cancelBooking(
+    public ApiResponse<BookingResponse> createBooking(
+            @Valid @RequestBody CreateBookingRequest request
     ) {
+        return ApiResponse.created("Success!", bookingService.createBooking(request));
     }
+//
+//    @PatchMapping("/booking/{booking_id}/cancel")
+//    public ApiResponse<BookingResponse> cancelBooking(
+//    ) {
+//    }
 }

@@ -3,6 +3,7 @@ package org.example.hotelbooking.service;
 import org.example.hotelbooking.constant.ErrorMessage;
 import org.example.hotelbooking.domain.BookingStatus;
 import org.example.hotelbooking.domain.RoomStatus;
+import org.example.hotelbooking.dto.AvailableRoomsRequest;
 import org.example.hotelbooking.dto.RoomResponse;
 import org.example.hotelbooking.exception.BadRequestException;
 import org.example.hotelbooking.repository.RoomRepository;
@@ -30,4 +31,8 @@ public class RoomService {
                 .toList();
     }
 
+    @Transactional
+    public List<RoomResponse> getAvailableRooms(AvailableRoomsRequest request){
+        return getAllRooms();
+    }
 }

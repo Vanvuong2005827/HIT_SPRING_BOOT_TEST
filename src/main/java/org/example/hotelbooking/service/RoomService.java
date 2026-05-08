@@ -29,5 +29,12 @@ public class RoomService {
                 .map(RoomResponse::from)
                 .toList();
     }
+    @Transactional(readOnly = true)
+    public List<RoomResponse> getEmptyRoom(){
+        return roomRepository.findEmptyRoom("AVAIABLE")
+                .stream()
+                .map(RoomResponse::from)
+                .toList();
+    }
 
 }

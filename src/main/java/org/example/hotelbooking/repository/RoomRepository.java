@@ -17,4 +17,9 @@ public interface RoomRepository extends JpaRepository<Room, String> {
 
     @Query("select r from Room r join fetch r.roomType order by r.roomName asc")
     List<Room> findAllWithRoomType();
+
+    @Query(value = "select r from Room r where r.status = :status")
+    List<Room> findEmptyRoom(@Param("status") String status);
+
+
 }

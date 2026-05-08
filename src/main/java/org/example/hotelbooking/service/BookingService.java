@@ -8,6 +8,7 @@ import org.example.hotelbooking.domain.Room;
 import org.example.hotelbooking.domain.RoomStatus;
 import org.example.hotelbooking.dto.BookingResponse;
 import org.example.hotelbooking.dto.CreateBookingRequest;
+import org.example.hotelbooking.dto.RoomResponse;
 import org.example.hotelbooking.exception.BadRequestException;
 import org.example.hotelbooking.exception.ConflictException;
 import org.example.hotelbooking.exception.ResourceNotFoundException;
@@ -21,6 +22,30 @@ import java.util.List;
 
 @Service
 public class BookingService {
+    private final BookingRepository bookingRepository;
 
-    // TO DO
+    public BookingService(BookingRepository bookingRepository) {
+        this.bookingRepository = bookingRepository;
+    }
+
+    @Transactional(readOnly = true)
+    public BookingResponse getBookingById(String id) {
+        Booking  booking = bookingRepository.findBookingById(id);
+        return BookingResponse.from(booking);
+    }
+    @Transactional(readOnly = true)
+    public BookingResponse getBookingByCCCD(String cccd) {
+        Booking  booking = bookingRepository.findBookingByCCCD(cccd);
+        return BookingResponse.from(booking);
+    }
+
+    @Transactional(readOnly = true)
+    public BookingResponse createBooking(CreateBookingRequest request) {
+        Booking booking =
+        Booking  booking = bookingRepository.save()
+        return BookingResponse.from(booking);
+    }
+
+
+
 }

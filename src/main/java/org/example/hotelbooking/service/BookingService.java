@@ -21,6 +21,32 @@ import java.util.List;
 
 @Service
 public class BookingService {
+    private final BookingRepository bookingRepository;
 
-    // TO DO
+
+    public BookingService(BookingRepository bookingRepository) {
+        this.bookingRepository = bookingRepository;
+    }
+
+    @Transactional(readOnly = true)
+    public BookingResponse getBooking(String id) {
+        return bookingRepository.findById(id)
+                .map(BookingResponse::from)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking", "Id"));
+    }
+
+    public BookingResponse createBooking(CreateBookingRequest request) {
+        BookingResponse booking = BookingResponse.builder()
+                .customerName(request.customerName())
+                .customerCccd(request.customerCccd())
+                .roomId(request.roomId())
+                .checkInDateTime(request.checkInDateTime())
+                .checkOutDateTime(request.checkOutDateTime())
+                .numberOfGuests(request.numberOfGuests())
+                .status(BookingStatus.PENDING)
+                .note(request.note())
+                .build();
+
+        return booking;
+    }
 }

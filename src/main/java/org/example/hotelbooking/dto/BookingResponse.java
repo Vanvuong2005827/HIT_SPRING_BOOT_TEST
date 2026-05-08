@@ -1,11 +1,13 @@
 package org.example.hotelbooking.dto;
 
+import lombok.Builder;
 import org.example.hotelbooking.domain.Booking;
 import org.example.hotelbooking.domain.BookingStatus;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
+@Builder
 public record BookingResponse(
         String id,
         String customerName,

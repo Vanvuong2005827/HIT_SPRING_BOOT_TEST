@@ -1,11 +1,11 @@
-package org.example.hotelbooking.dto;
+package org.example.hotelbooking.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import org.example.hotelbooking.constant.ErrorMessage;
 
 public record FindBookingsByCustomerRequest(
-        // TO DO
+        @NotBlank(message = "CCCD không được để trống")
+        @Pattern(regexp = "^\\d{12}$")
         String cccd
 ) {
 }

@@ -30,4 +30,9 @@ public class RoomService {
                 .toList();
     }
 
+//    @Transactional(readOnly = true)
+//    public List<RoomResponse> getAllRoomAvailable(){
+//        return
+//    }
+
 }

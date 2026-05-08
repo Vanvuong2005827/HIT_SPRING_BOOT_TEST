@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 @Validated
 @RestController
@@ -36,24 +37,31 @@ public class BookingController {
         this.bookingService = bookingService;
     }
 
-    @GetMapping("/booking")
+    @GetMapping("/booking/{id}")
     public ApiResponse<BookingResponse> getBooking(
+            @PathVariable String id
     ) {
+        return ApiResponse.ok("success",bookingService.getBooking(id));
     }
 
     @GetMapping("/bookings")
     public ApiResponse<ListResponse<BookingResponse>> getBookingsByCustomer(
+            @RequestParam String cccd
     ) {
+        List<BookingResponse> responses = bookingService.getBookingsByCCCD(cccd);
+        return ApiResponse.ok("success",ListResponse.of(responses));
     }
 
     @PostMapping("/booking")
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<BookingResponse> createBooking() {
-
+    public ApiResponse<BookingResponse> createBooking(@Valid @RequestBody CreateBookingRequest request) {
+        return ApiResponse.ok("success",BookingResponse.from(bookingService.create(request)));
     }
 
     @PatchMapping("/booking/{booking_id}/cancel")
     public ApiResponse<BookingResponse> cancelBooking(
+            @RequestParam String id
     ) {
+        return ApiResponse.ok("success",bookingService.cancelBooking(id));
     }
 }

@@ -39,5 +39,6 @@ public class RoomController {
     @GetMapping("/rooms/available")
     public ApiResponse<ListResponse<RoomResponse>> getAvailableRooms(
     ) {
+        return null;
     }
 }

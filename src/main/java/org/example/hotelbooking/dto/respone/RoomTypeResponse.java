@@ -1,4 +1,4 @@
-package org.example.hotelbooking.dto;
+package org.example.hotelbooking.dto.respone;
 
 import org.example.hotelbooking.domain.RoomType;
 

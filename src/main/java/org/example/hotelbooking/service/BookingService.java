@@ -8,6 +8,7 @@ import org.example.hotelbooking.domain.Room;
 import org.example.hotelbooking.domain.RoomStatus;
 import org.example.hotelbooking.dto.BookingResponse;
 import org.example.hotelbooking.dto.CreateBookingRequest;
+import org.example.hotelbooking.dto.RoomResponse;
 import org.example.hotelbooking.exception.BadRequestException;
 import org.example.hotelbooking.exception.ConflictException;
 import org.example.hotelbooking.exception.ResourceNotFoundException;
@@ -23,4 +24,52 @@ import java.util.List;
 public class BookingService {
 
     // TO DO
+    private final BookingRepository bookingRepository;
+    private final RoomRepository roomRepository;
+
+    public BookingService(BookingRepository bookingRepository, RoomRepository roomRepository) {
+        this.bookingRepository = bookingRepository;
+        this.roomRepository = roomRepository;
+    }
+
+    @Transactional(readOnly = true)
+    public BookingResponse findById(String id){
+        return BookingResponse.from(bookingRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Ma booking",id)));
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookingResponse> getAll() {
+        return  bookingRepository.findAll()
+                .stream()
+                .map(BookingResponse::from)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookingResponse> findByCustomer(String cccd){
+        return bookingRepository.findByCustomerCccd(cccd)
+                .stream()
+                .map(BookingResponse::from)
+                .toList();
+    }
+
+    @Transactional
+    public BookingResponse create(CreateBookingRequest request){
+
+        Booking booking = new Booking();
+
+        booking.setCustomerName(request.customerName());
+        booking.setCustomerCccd(request.customerCccd());
+        booking.setNote(request.note());
+        booking.setRoom(roomRepository.getById(request.roomId()));
+        booking.setCheckInDateTime(request.checkInDateTime());
+        booking.setCheckOutDateTime(request.checkOutDateTime());
+        booking.setNumberOfGuests(request.numberOfGuests());
+        booking.setStatus(BookingStatus.PENDING);
+
+        return BookingResponse.from(bookingRepository.save(booking));
+    }
+
+
 }

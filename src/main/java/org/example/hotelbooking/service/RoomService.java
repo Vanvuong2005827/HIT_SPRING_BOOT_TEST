@@ -30,4 +30,12 @@ public class RoomService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<RoomResponse> getRoomAvailable(){
+        return roomRepository.findAllWithAvailable()
+                .stream()
+                .map(RoomResponse::from)
+                .toList();
+    }
+
 }

@@ -1,16 +1,6 @@
 package org.example.hotelbooking.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -22,6 +12,7 @@ public class Booking {
 
     @Id
     @Column(length = 36, nullable = false, updatable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
     @Column(name = "customer_name", nullable = false)
@@ -75,6 +66,10 @@ public class Booking {
     @PreUpdate
     void preUpdate() {
         updatedAt = Instant.now();
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getId() {

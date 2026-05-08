@@ -9,6 +9,7 @@ import org.example.hotelbooking.constant.ErrorMessage;
 
 import java.time.Instant;
 
+
 public record CreateBookingRequest(
         // TO DO
         String customerName,
@@ -30,5 +31,7 @@ public record CreateBookingRequest(
 
         // TO DO
         String note
+
+
 ) {
 }

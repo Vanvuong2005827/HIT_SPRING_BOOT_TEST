@@ -17,4 +17,8 @@ public interface RoomRepository extends JpaRepository<Room, String> {
 
     @Query("select r from Room r join fetch r.roomType order by r.roomName asc")
     List<Room> findAllWithRoomType();
+<<<<<<< HEAD
+=======
+    List<Room> findByStatus(RoomStatus status);
+>>>>>>> e18bc9b (fix: repair my project)
 }

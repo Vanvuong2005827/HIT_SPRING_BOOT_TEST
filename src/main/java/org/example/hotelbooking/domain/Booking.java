@@ -11,6 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import lombok.Builder;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "booking")
+@Builder
 public class Booking {
 
     @Id

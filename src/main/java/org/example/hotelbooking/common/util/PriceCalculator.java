@@ -8,6 +8,6 @@ public final class PriceCalculator {
     }
 
     public static BigDecimal calculate(BigDecimal pricePerNight, long nights) {
-        // TO DO
+        return pricePerNight.multiply(BigDecimal.valueOf(nights));
     }
 }

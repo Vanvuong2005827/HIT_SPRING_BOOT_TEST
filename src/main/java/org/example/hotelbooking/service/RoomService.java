@@ -30,4 +30,14 @@ public class RoomService {
                 .toList();
     }
 
+<<<<<<< HEAD
+=======
+    @Transactional(readOnly = true)
+    public List<RoomResponse> findRoomByStatus(RoomStatus status){
+        return roomRepository.findByStatus(status).stream()
+                .map(RoomResponse::from)
+                .toList();
+    }
+
+>>>>>>> e18bc9b (fix: repair my project)
 }

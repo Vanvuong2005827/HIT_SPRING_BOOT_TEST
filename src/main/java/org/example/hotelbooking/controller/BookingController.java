@@ -38,10 +38,10 @@ public class BookingController {
     }
 
     @GetMapping("/booking")
-    public ResponseEntity<ApiResponse<BookingResponse>> getBooking(
+    public ResponseEntity<ApiResponse<BookingResponse>> getBookingById(
             @RequestParam String id
     ) {
-        BookingResponse bookingResponses = bookingService.findById(id);
+        BookingResponse bookingResponses = bookingService.findBookingById(id);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -49,28 +49,36 @@ public class BookingController {
     }
 
     @GetMapping("/bookings")
-    public ResponseEntity<ApiResponse<List<BookingResponse>>> getBookingsByCustomer(
+    public ResponseEntity<ApiResponse<ListResponse<BookingResponse>>> getBookingsByCustomer(
+            @RequestParam String customerCccd
     ) {
-        List<BookingResponse> bookingResponses = bookingService.findAll();
+        List<BookingResponse> bookingResponses = bookingService.findBookingByCustomerCccd(customerCccd);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.ok("Lấy danh sách booking thành công", bookingResponses));
+                .body(ApiResponse.ok("Lấy danh sách booking thành công", ListResponse.of(bookingResponses)));
     }
 
     @PostMapping("/booking")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ApiResponse<BookingResponse>> createBooking(@RequestBody CreateBookingRequest createBookingRequest) {
-        BookingResponse bookingResponse = bookingService.create(createBookingRequest);
+        BookingResponse bookingResponse = bookingService.createBooking(createBookingRequest);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.ok("Thành công", bookingResponse));
     }
 
     @PatchMapping("/booking/{booking_id}/cancel")
-    public ApiResponse<BookingResponse> cancelBooking(
+    public ResponseEntity<ApiResponse<BookingResponse>> cancelBooking(
             @PathVariable String id
     ) {
-
+        if (bookingService.cancelBooking(id)){
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(ApiResponse.ok("Thành công", null));
+        }
+        else return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error("Thật bại"));
     }
 }

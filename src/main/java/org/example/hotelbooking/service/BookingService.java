@@ -12,14 +12,17 @@ import org.example.hotelbooking.dto.RoomResponse;
 import org.example.hotelbooking.exception.BadRequestException;
 import org.example.hotelbooking.exception.ConflictException;
 import org.example.hotelbooking.exception.ResourceNotFoundException;
+import org.example.hotelbooking.exception.ValidationException;
 import org.example.hotelbooking.repository.BookingRepository;
 import org.example.hotelbooking.repository.RoomRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.print.Book;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookingService {
@@ -33,57 +36,82 @@ public class BookingService {
     }
 
     @Transactional(readOnly = true)
-    public List<BookingResponse> findAll(){
-        List<Booking> bookings = bookingRepository.findAll();
-        List<BookingResponse> bookingResponses = new ArrayList<>();
-        for (Booking b : bookings){
-            bookingResponses.add(BookingResponse.from(b));
-        }
-        return bookingResponses;
+    public List<BookingResponse> findAllBooking() {
+        return bookingRepository.findAll().stream()
+                .map(BookingResponse::from)
+                .toList();
     }
 
     @Transactional(readOnly = true)
-    public BookingResponse findById(String id){
+    public BookingResponse findBookingById(String id) {
         return bookingRepository.findById(id)
                 .map(BookingResponse::from)
                 .orElseThrow(() -> new ResourceNotFoundException("Id", id));
     }
 
     @Transactional(readOnly = true)
-    public List<BookingResponse> findByCustomerCccd(String cccd){
-        List<Booking> bookings = bookingRepository.findByCustomerCccd(cccd);
-        List<BookingResponse> bookingResponses = new ArrayList<>();
-        for (Booking b : bookings)
-            bookingResponses.add(BookingResponse.from(b));
-
-        return bookingResponses;
+    public List<BookingResponse> findBookingByCustomerCccd(String cccd) {
+        return bookingRepository.findByCustomerCccd(cccd).stream()
+                .map(BookingResponse::from)
+                .toList();
     }
 
-    @Transactional(readOnly = true)
-    public BookingResponse create(CreateBookingRequest createBookingRequest){
-        Booking booking = new Booking();
+    @Transactional
+    public BookingResponse createBooking(CreateBookingRequest createBookingRequest) {
+        Optional<Room> room = roomRepository.findById(createBookingRequest.roomId());
+        if (room.isEmpty())
+            throw new ResourceNotFoundException("RoomId", createBookingRequest.roomId());
 
-        booking.setCustomerName(createBookingRequest.customerName());
-        booking.setCustomerCccd(createBookingRequest.customerCccd());
-        booking.setCheckInDateTime(createBookingRequest.checkInDateTime());
-        booking.setCheckOutDateTime(createBookingRequest.checkOutDateTime());
-        booking.setNumberOfGuests(createBookingRequest.numberOfGuests());
-        booking.setNote(createBookingRequest.note());
+        Booking booking = Booking.builder()
+                .customerName(createBookingRequest.customerName())
+                .customerCccd(createBookingRequest.customerCccd())
+                .room(room.get())
+                .checkInDateTime(createBookingRequest.checkInDateTime())
+                .checkOutDateTime(createBookingRequest.checkOutDateTime())
+                .numberOfGuests(createBookingRequest.numberOfGuests())
+                .note(createBookingRequest.note())
+                .build();
+
+        if (booking.getNote() != null && booking.getNote().isBlank())
+            throw new ValidationException("Note có thể null nhưng không thể chỉ chứa khoảng trắng");
+        if (booking.getCheckInDateTime().isAfter(booking.getCheckOutDateTime()))
+            throw new ValidationException("Thời gian nhận phòng phải nhỏ hơn thời gian trả phòng");
+        if (booking.getNumberOfGuests() <= 0)
+            throw new ValidationException("Số khách trong 1 phòng phải là số dương");
+        if (room.get().getStatus().equals(RoomStatus.INACTIVE))
+            throw new BadRequestException("Phòng không còn hoạt động");
 
         return BookingResponse.from(booking);
     }
 
-    @Transactional(readOnly = true)
-    public void delete(String id){
-        if (!roomRepository.existsById(id))
+    @Transactional
+    public void deleteBookingById(String id) {
+        if (!bookingRepository.existsById(id))
             throw new ResourceNotFoundException("Id", id);
 
-        roomRepository.deleteById(id);
+        bookingRepository.deleteById(id);
     }
 
     @Transactional(readOnly = true)
-    public boolean checkPending(String id){
-        Optical<Booking> booking = bookingRepository.findById(id);
+    public boolean checkPending(String id) {
+        Optional<Booking> booking = bookingRepository.findById(id);
+        if (booking.isEmpty())
+            throw new ResourceNotFoundException("Id", id);
 
+        return booking.get().getStatus().equals(BookingStatus.PENDING);
+    }
+
+    @Transactional
+    public boolean cancelBooking(String id){
+        Optional<Booking> booking = bookingRepository.findById(id);
+        if (booking.isEmpty())
+            throw new ResourceNotFoundException("Id", id);
+
+        if (booking.get().getStatus().equals(BookingStatus.PENDING)){
+            booking.get().setStatus(BookingStatus.CANCELLED);
+            bookingRepository.save(booking.get());
+            return true;
+        }
+        else return false;
     }
 }

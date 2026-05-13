@@ -9,5 +9,4 @@ import java.util.List;
 
 public interface BookingRepository extends JpaRepository<Booking, String> {
     public List<Booking> findByCustomerCccd(String cccd);
-    public
 }

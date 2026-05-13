@@ -35,17 +35,19 @@ public class RoomController {
     }
 
     @GetMapping("/rooms")
-    public ApiResponse<ListResponse<RoomResponse>> getRooms() {
+    public ResponseEntity<ApiResponse<ListResponse<RoomResponse>>> getRooms() {
         List<RoomResponse> items = roomService.getAllRooms();
-        return ApiResponse.ok("Success!", ListResponse.of(items));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.ok("Success!", ListResponse.of(items)));
     }
 
     @GetMapping("/rooms/available")
-    public ResponseEntity<ApiResponse<List<RoomResponse>>> getAvailableRooms(
+    public ResponseEntity<ApiResponse<ListResponse<RoomResponse>>> getAvailableRooms(
     ) {
-        List<RoomResponse> roomResponseList = roomService.findByStatus(RoomStatus.AVAILABLE);
+        List<RoomResponse> roomResponseList = roomService.findRoomByStatus(RoomStatus.AVAILABLE);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.ok("Thành công", roomResponseList));
+                .body(ApiResponse.ok("Thành công", ListResponse.of(roomResponseList)));
     }
 }

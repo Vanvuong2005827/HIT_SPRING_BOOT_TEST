@@ -34,16 +34,10 @@ public class RoomService {
     }
 
     @Transactional(readOnly = true)
-    public List<RoomResponse> findByStatus(RoomStatus status){
-        List<Room> rooms = roomRepository.findByStatus(status);
-        List<RoomResponse> roomResponseList = new ArrayList<>();
-
-        if (rooms.size() == 0) throw new ResourceNotFoundException("Status", status.toString());
-
-        for (Room r : rooms){
-            roomResponseList.add(RoomResponse.from(r));
-        }
-        return roomResponseList;
+    public List<RoomResponse> findRoomByStatus(RoomStatus status){
+        return roomRepository.findByStatus(status).stream()
+                .map(RoomResponse::from)
+                .toList();
     }
 
 }

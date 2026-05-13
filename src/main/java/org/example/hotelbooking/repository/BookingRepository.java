@@ -8,6 +8,5 @@ import java.time.Instant;
 import java.util.List;
 
 public interface BookingRepository extends JpaRepository<Booking, String> {
-
-    // TO DO
+    public List<Booking> findByCustomerCccd(String cccd);
 }

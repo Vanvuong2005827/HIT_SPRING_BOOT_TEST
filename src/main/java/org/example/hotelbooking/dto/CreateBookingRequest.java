@@ -1,34 +1,45 @@
 package org.example.hotelbooking.dto;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import org.example.hotelbooking.constant.ErrorMessage;
+import org.example.hotelbooking.domain.Booking;
+import org.example.hotelbooking.exception.BadRequestException;
 
 import java.time.Instant;
 
 public record CreateBookingRequest(
-        // TO DO
+        @NotBlank(message = "Tên khách hàng không được để trống")
         String customerName,
 
-        // TO DO
+        @NotBlank(message = "Căn cước công dân của khách hàng không được để trống")
         String customerCccd,
 
-        // TO DO
+        @NotBlank(message = "Id phòng không được để trống")
         String roomId,
 
-        // TO DO
+        @NotBlank(message = "Thời gian nhận phòng không được để trống")
         Instant checkInDateTime,
 
-        // TO DO
         Instant checkOutDateTime,
 
-        // TO DO
+        @NotBlank(message = "Số lượng khách không được để trống")
+        @PositiveOrZero(message = "Sô lượng khách phải là số không âm")
         Integer numberOfGuests,
 
-        // TO DO
         String note
 ) {
+    public static CreateBookingRequest from(Booking booking){
+        if (booking.getCheckOutDateTime() != null && booking.getCheckInDateTime().isAfter(booking.getCheckOutDateTime()))
+            throw new BadRequestException("Thời gian nhận phòng phải nhỏ hơn thời gian trả phòng");
+
+        return new CreateBookingRequest(
+                booking.getCustomerName(),
+                booking.getCustomerCccd(),
+                booking.getRoom().getId(),
+                booking.getCheckInDateTime(),
+                booking.getCheckOutDateTime(),
+                booking.getNumberOfGuests(),
+                booking.getNote()
+        );
+    }
 }

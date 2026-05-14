@@ -12,7 +12,6 @@ public class Booking {
 
     @Id
     @Column(length = 36, nullable = false, updatable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
     @Column(name = "customer_name", nullable = false)

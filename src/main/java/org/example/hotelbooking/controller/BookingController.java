@@ -38,7 +38,7 @@ public class BookingController {
     }
 
     @GetMapping("/booking/{id}")
-    public ApiResponse<BookingResponse> getBooking(
+    public ApiResponse<BookingResponse> getBookingById(
             @PathVariable String id
     ) {
         return ApiResponse.ok("success",bookingService.getBooking(id));
@@ -55,12 +55,12 @@ public class BookingController {
     @PostMapping("/booking")
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<BookingResponse> createBooking(@Valid @RequestBody CreateBookingRequest request) {
-        return ApiResponse.ok("success",BookingResponse.from(bookingService.create(request)));
+        return ApiResponse.ok("success",BookingResponse.from(bookingService.createBooking(request)));
     }
 
     @PatchMapping("/booking/{booking_id}/cancel")
     public ApiResponse<BookingResponse> cancelBooking(
-            @RequestParam String id
+            @PathVariable("booking_id") String id
     ) {
         return ApiResponse.ok("success",bookingService.cancelBooking(id));
     }

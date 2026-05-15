@@ -35,7 +35,7 @@ public class RoomController {
 
     @GetMapping("/rooms/available")
     public ApiResponse<ListResponse<RoomResponse>> getAvailableRooms(
-            @RequestBody @Valid AvailableRoomsRequest request
+            @Valid AvailableRoomsRequest request
     ) {
         List<RoomResponse> items = roomService.getAvailableRooms(request);
         return ApiResponse.ok(SuccessMessage.GET_SUCCESS, ListResponse.of(items));

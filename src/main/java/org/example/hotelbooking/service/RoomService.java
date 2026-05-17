@@ -5,6 +5,7 @@ import org.example.hotelbooking.repository.RoomRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 
 import static org.example.hotelbooking.domain.RoomStatus.AVAILABLE;
@@ -27,10 +28,11 @@ public class RoomService {
     }
 
     @Transactional(readOnly = true)
-    public List<RoomResponse> getAvailableRooms() {
-        return roomRepository.findAllByStatusWithRoomType(AVAILABLE)
+    public List<RoomResponse> getAvailableRooms(Instant checkInDateTime, Instant checkOutDateTime) {
+        return roomRepository.findAvailableRoomsForDateRange(checkInDateTime, checkOutDateTime)
                 .stream()
                 .map(RoomResponse::from)
                 .toList();
     }
 }
+

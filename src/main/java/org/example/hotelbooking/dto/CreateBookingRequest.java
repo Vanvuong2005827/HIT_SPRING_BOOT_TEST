@@ -1,10 +1,6 @@
 package org.example.hotelbooking.dto;
 
 import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.Setter;
-import org.example.hotelbooking.constant.ErrorMessage;
-
 import java.time.Instant;
 
 
@@ -31,6 +27,7 @@ public record CreateBookingRequest(
 
         // TO DO
         @NotNull(message = "Giờ check-out không được để trống")
+        @Future(message = "Thời gian check-out phải ở tương lai")
         Instant checkOutDateTime,
 
         // TO DO

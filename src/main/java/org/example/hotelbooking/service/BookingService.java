@@ -1,13 +1,11 @@
 package org.example.hotelbooking.service;
 
-import org.apache.coyote.BadRequestException;
-import org.example.hotelbooking.common.response.ListResponse;
 import org.example.hotelbooking.common.util.PriceCalculator;
 import org.example.hotelbooking.domain.Booking;
 import org.example.hotelbooking.domain.Room;
 import org.example.hotelbooking.dto.BookingResponse;
 import org.example.hotelbooking.dto.CreateBookingRequest;
-import org.example.hotelbooking.dto.RoomResponse;
+import org.example.hotelbooking.exception.BadRequestException;
 import org.example.hotelbooking.exception.ResourceNotFoundException;
 import org.example.hotelbooking.repository.BookingRepository;
 import org.example.hotelbooking.repository.RoomRepository;
@@ -33,11 +31,11 @@ public class BookingService {
     }
 
     @Transactional
-    public Booking createBooking(CreateBookingRequest request) {
+    public BookingResponse createBooking(CreateBookingRequest request) {
         Instant checkIn = request.checkInDateTime();
         Instant checkOut = request.checkOutDateTime();
         if (checkOut.isBefore(checkIn) || checkOut.equals(checkIn)) {
-            throw new IllegalArgumentException("Thời gian check-out phải diễn ra sau check-in.");
+            throw new BadRequestException("Thời gian check-out phải diễn ra sau check-in.");
         }
         long nights = ChronoUnit.DAYS.between(checkIn, checkOut);
         if (nights == 0) {
@@ -46,7 +44,7 @@ public class BookingService {
         Room room = roomRepository.findById(request.roomId())
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy phòng với ID đã cung cấp."));
         if(room.getStatus()==INACTIVE){
-            throw new IllegalArgumentException("Phòng đã được đặt.");
+            throw new BadRequestException("Phòng đã được đặt.");
         }
         Booking booking = new Booking();
         booking.setCustomerName(request.customerName());
@@ -55,7 +53,7 @@ public class BookingService {
         booking.setCheckInDateTime(checkIn);
         booking.setCheckOutDateTime(checkOut);
         if(request.numberOfGuests()>room.getRoomType().getMaxOccupancy()){
-            throw new IllegalArgumentException("Số lượng khách quá giới hạn phòng!!");
+            throw new BadRequestException("Số lượng khách quá giới hạn phòng!!");
         }
         booking.setNumberOfGuests(request.numberOfGuests());
         booking.setRoom(room);
@@ -64,12 +62,13 @@ public class BookingService {
         bookingRepository.save(booking);
         room.setStatus(INACTIVE);
         roomRepository.save(room);
-        return booking;
+        BookingResponse bookingResponse = BookingResponse.from(booking);
+        return bookingResponse;
     }
     @Transactional(readOnly = true)
-    public BookingResponse getBooking(String id) {
+    public BookingResponse getBookingById(String id) {
         Booking booking = bookingRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy booking với ID",id));
+                .orElseThrow(() -> new ResourceNotFoundException("Booking",id));
         return BookingResponse.from(booking);
     }
     @Transactional(readOnly = true)
@@ -81,7 +80,7 @@ public class BookingService {
     @Transactional
     public BookingResponse cancelBooking(String id){
         Booking booking = bookingRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy booking với ID: ",id));
+                .orElseThrow(() -> new ResourceNotFoundException("Booking",id));
         if(booking.getStatus()==CANCELLED){
             throw new IllegalArgumentException("Booking này đã bị hủy!!!");
         }

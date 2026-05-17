@@ -1,8 +1,10 @@
 package org.example.hotelbooking.controller;
 
+import jakarta.validation.Valid;
 import org.example.hotelbooking.common.response.ApiResponse;
 import org.example.hotelbooking.common.response.ListResponse;
 import org.example.hotelbooking.constant.ApiPath;
+import org.example.hotelbooking.dto.AvailableRoomsRequest;
 import org.example.hotelbooking.dto.RoomResponse;
 import org.example.hotelbooking.service.RoomService;
 import org.springframework.validation.annotation.Validated;
@@ -30,8 +32,11 @@ public class RoomController {
     }
 
     @GetMapping("/rooms/available")
-    public ApiResponse<ListResponse<RoomResponse>> getAvailableRooms() {
-        List<RoomResponse> items = roomService.getAvailableRooms();
+    public ApiResponse<ListResponse<RoomResponse>> getAvailableRooms(@Valid AvailableRoomsRequest request) {
+        List<RoomResponse> items = roomService.getAvailableRooms(
+                request.checkInDateTime(),
+                request.checkOutDateTime()
+        );
         return ApiResponse.ok("Success!", ListResponse.of(items));
     }
 }

@@ -32,17 +32,13 @@ public class BookingService {
 
     @Transactional(readOnly = true)
     public BookingResponse getBooking(String id) {
-        Booking booking = bookingRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Booking", id));
+        Booking booking = bookingRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Booking", id));
         return BookingResponse.from(booking);
     }
 
     @Transactional(readOnly = true)
     public List<BookingResponse> getBookingsByCustomer(String cccd) {
-        return bookingRepository.findByCustomerCccd(cccd)
-                .stream()
-                .map(BookingResponse::from)
-                .toList();
+        return bookingRepository.findByCustomerCccd(cccd).stream().map(BookingResponse::from).toList();
     }
 
     @Transactional
@@ -91,13 +87,10 @@ public class BookingService {
 
     @Transactional
     public BookingResponse cancelBooking(String bookingId) {
-        Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new ResourceNotFoundException("Booking", bookingId));
-
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new ResourceNotFoundException("Booking", bookingId));
         if (booking.getStatus() != BookingStatus.PENDING) {
             throw new ConflictException(ErrorMessage.BOOKING_NOT_PENDING);
         }
-
         booking.setStatus(BookingStatus.CANCELLED);
         booking = bookingRepository.save(booking);
         return BookingResponse.from(booking);

@@ -1,12 +1,9 @@
 package org.example.hotelbooking.dto;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
-import org.example.hotelbooking.constant.ErrorMessage;
-
 import java.time.Instant;
 
 public record CreateBookingRequest(
@@ -27,6 +24,7 @@ public record CreateBookingRequest(
 
         @NotNull(message = "Số lượng khách không được để trống")
         @Min(value = 1, message = "Số lượng khách phải từ 1 trở lên")
+        @Max(value = 10, message = "Số lượng khách vượt quá số lượng tối đa hệ thống cho phép")
         Integer numberOfGuests,
 
         String note

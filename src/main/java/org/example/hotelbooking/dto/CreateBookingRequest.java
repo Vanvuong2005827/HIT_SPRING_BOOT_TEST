@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import java.time.Instant;
 
 public record CreateBookingRequest(
@@ -11,6 +12,7 @@ public record CreateBookingRequest(
         String customerName,
 
         @NotBlank(message = "CCCD không được để trống")
+        @Pattern(regexp = "^\\d{12}$", message = "CCCD không hợp lệ (phải bao gồm đúng 12 chữ số)")
         String customerCccd,
 
         @NotBlank(message = "ID không được để trống")

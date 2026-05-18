@@ -8,6 +8,7 @@ import org.example.hotelbooking.constant.ApiPath;
 import org.example.hotelbooking.constant.SuccessMessage;
 import org.example.hotelbooking.dto.BookingResponse;
 import org.example.hotelbooking.dto.CreateBookingRequest;
+import org.example.hotelbooking.dto.FindBookingsByCustomerRequest;
 import org.example.hotelbooking.service.BookingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -30,15 +31,15 @@ public class BookingController {
     public ApiResponse<BookingResponse> getBookingById(
             @RequestParam("booking_id") @NotBlank String bookingId
     ) {
-        BookingResponse response = bookingService.getBooking(bookingId);
+        BookingResponse response = bookingService.getBookingById(bookingId);
         return ApiResponse.ok(SuccessMessage.GET_SUCCESS, response);
     }
 
     @GetMapping("/bookings")
     public ApiResponse<ListResponse<BookingResponse>> getBookingsByCustomer(
-            @RequestParam("cccd") @NotBlank String cccd
+            @Valid FindBookingsByCustomerRequest request
     ) {
-        List<BookingResponse> responses = bookingService.getBookingsByCustomer(cccd);
+        List<BookingResponse> responses = bookingService.getBookingsByCustomer(request.cccd());
         return ApiResponse.ok(SuccessMessage.GET_SUCCESS, ListResponse.of(responses));
     }
 

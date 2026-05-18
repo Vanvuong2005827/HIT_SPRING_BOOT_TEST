@@ -31,14 +31,18 @@ public class BookingService {
     }
 
     @Transactional(readOnly = true)
-    public BookingResponse getBooking(String id) {
-        Booking booking = bookingRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Booking", id));
+    public BookingResponse getBookingById(String id) {
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking", id));
         return BookingResponse.from(booking);
     }
 
     @Transactional(readOnly = true)
     public List<BookingResponse> getBookingsByCustomer(String cccd) {
-        return bookingRepository.findByCustomerCccd(cccd).stream().map(BookingResponse::from).toList();
+        return bookingRepository.findByCustomerCccd(cccd)
+                .stream()
+                .map(BookingResponse::from)
+                .toList();
     }
 
     @Transactional

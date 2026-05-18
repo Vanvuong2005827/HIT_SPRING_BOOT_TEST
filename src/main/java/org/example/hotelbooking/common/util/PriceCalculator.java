@@ -3,11 +3,12 @@ package org.example.hotelbooking.common.util;
 import java.math.BigDecimal;
 
 public final class PriceCalculator {
-
-    private PriceCalculator() {
-    }
+    private PriceCalculator() {}
 
     public static BigDecimal calculate(BigDecimal pricePerNight, long nights) {
-        // TO DO
+        if (pricePerNight == null || nights <= 0) {
+            return BigDecimal.ZERO;
+        }
+        return pricePerNight.multiply(BigDecimal.valueOf(nights));
     }
 }

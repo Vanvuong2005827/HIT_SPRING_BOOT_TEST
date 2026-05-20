@@ -39,5 +39,7 @@ public class RoomController {
     @GetMapping("/rooms/available")
     public ApiResponse<ListResponse<RoomResponse>> getAvailableRooms(
     ) {
+        List<RoomResponse> items=roomService.getAllRoomsAvailable();
+        return ApiResponse.ok(SuccessMessage.FETCH_DATA_SUCCESS, ListResponse.of(items));
     }
 }
